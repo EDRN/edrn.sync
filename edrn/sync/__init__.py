@@ -2,5 +2,5 @@
 # Copyright 2008 California Institute of Technology. ALL RIGHTS
 # RESERVED. U.S. Government Sponsorship acknowledged.
 
-'''Climate Data Exchange: Client Library.'''
+'''EDRN Sync Services'''
 
