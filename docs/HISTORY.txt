@@ -1,0 +1,13 @@
+Changelog
+*********
+
+
+0.0.0 - Initial
+===============
+
+This is an initial release of EDRN (_EDRN) Sync Services supporting minimal ``dmccsync``
+functionality.
+
+
+.. References:
+.. _EDRN: http://cancer.jpl.nasa.gov

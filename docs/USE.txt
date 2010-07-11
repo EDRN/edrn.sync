@@ -1,0 +1,9 @@
+Using EDRN Sync Services
+************************
+
+Installing the EDRN Sync Services package makes available the following
+commands on your computer:
+
+``dmccsync`` command
+    The ``cdxls`` command lets you slurp up a DMCC RDF file containing users
+    that need to be entered into EDRN IC LDAP.
