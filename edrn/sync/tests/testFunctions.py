@@ -2,7 +2,7 @@
 # Copyright 2010 California Institute of Technology. ALL RIGHTS
 # RESERVED. U.S. Government Sponsorship acknowledged.
 
-u'''EDRN Sync Services — unit tests for functions.'''
+u'''EDRN Sync Services - unit tests for functions.'''
 
 from base import EDRNSyncTestCase
 
