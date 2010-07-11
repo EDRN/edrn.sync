@@ -3,7 +3,7 @@
 # Copyright 2010 California Institute of Technology. ALL RIGHTS
 # RESERVED. U.S. Government Sponsorship acknowledged.
 
-u'''EDRN RDF User Sync tool dmccsync — parse user RDF from DMCC and sync to EDRN IC cancer LDAPS server.
+u'''EDRN RDF User Sync tool dmccsync - parse user RDF from DMCC and sync to EDRN IC cancer LDAPS server.
 '''
 
 import sys, getopt
