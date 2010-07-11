@@ -4,7 +4,7 @@ EDRN Sync Services
 
 This is the EDRN Sync Services (EDRN_) Client package.  It provides an API
 for slurping up the DMCC RDF user stream from their identity management 
-system.  It also provides three command-line tools:
+system.  It also provides the following command-line tools:
 
 dmccsync
     Takes a DMCC RDF users file and imports it into the EDRN IC LDAPS server.
