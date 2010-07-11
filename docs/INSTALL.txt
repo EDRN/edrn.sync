@@ -110,7 +110,7 @@ contact_  web page.
 
 .. References:
 .. _Agile OODT: http://agility.jpl.nasa.gov/
-.. _contact: http://cdx.jpl.nasa.gov/contact-info
+.. _contact: http://cancer.jpl.nasa.gov/
 .. _EasyInstall: http://peak.telecommunity.com/DevCenter/EasyInstall
 .. _Java: http://tinyurl.com/5kng2h
 .. _OODT: http://oodt.jpl.nasa.gov/
