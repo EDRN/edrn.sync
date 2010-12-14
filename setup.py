@@ -62,6 +62,7 @@ setup(
     entry_points={
         'console_scripts': [
             'dmccsync = edrn.sync.dmccsync:main',
+            'dmccgroupsync = edrn.sync.dmccmakegroups:main',
         ],
     }, 
     package_data = {

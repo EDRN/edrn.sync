@@ -1,6 +1,13 @@
 Changelog
 *********
 
+0.0.1 - Kumbaya
+===============
+
+This release adds group creation programs and APIs including the ``dmccgroupsync``
+script which implements Heather Kincaid's algorithm for adding groups and syncing them
+based on the DMCC RDF.
+
 
 0.0.0 - Initial
 ===============
