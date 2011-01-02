@@ -13,7 +13,7 @@ class ImportRDFTest(EDRNSyncTestCase):
         super(ImportRDFTest, self).setUp()
 
     def testX(self):
-        return true
+        return True
     
 
 def test_suite():
