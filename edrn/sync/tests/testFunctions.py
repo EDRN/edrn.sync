@@ -5,6 +5,7 @@
 u'''EDRN Sync Services - unit tests for functions.'''
 
 from base import EDRNSyncTestCase
+import unittest
 
 class ImportRDFTest(EDRNSyncTestCase):
     '''Test the findFile function.'''
