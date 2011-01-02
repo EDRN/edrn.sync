@@ -4,7 +4,7 @@
 
 '''EDRN Sync Services: tests.'''
 
-import unittest, testObjects, testFunctions
+import unittest, testFunctions
 
 def test_suite():
     suite = unittest.TestSuite()
