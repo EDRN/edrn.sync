@@ -14,7 +14,7 @@ import re
 import time
 import ldap.modlist as modlist
 from xml.dom.minidom import Node
-from ldap import personExists
+from syncldap import personExists
 from rdf import RDFPersonList
 
 warnings.filterwarnings("ignore")

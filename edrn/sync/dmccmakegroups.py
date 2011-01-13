@@ -11,7 +11,7 @@ import warnings
 import ldap
 import ldap.modlist as modlist
 from rdf import RDFPersonList, RDFSiteList
-from ldap import groupExists
+from syncldap import groupExists
 
 warnings.filterwarnings("ignore")
 _verbose = False
