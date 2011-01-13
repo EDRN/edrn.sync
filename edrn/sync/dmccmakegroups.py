@@ -17,6 +17,8 @@ from xml.dom.minidom import Node
 
 warnings.filterwarnings("ignore")
 _verbose = False
+_defaultPhone = '555-555-5555'
+_defaultEmail = 'unknown@example.com'
 _helpMessage = '''
 Usage: dmccgroupsync [-v] [-u LDAP DN] [-p password] [-l LDAP URL] user RDF file site RDF file...
 
@@ -53,6 +55,7 @@ class _RDFPersonList:
     def parse(self):
         doc = xml.dom.minidom.parse(self.filePath)
         for node in doc.getElementsByTagName("rdf:Description"):
+            rdfId = self.getRdfId(node)
             siteId = self.getSiteId(node)
             email = self.stripMailTo(self.getSimpleElementText(node, "_3:mbox"))
             if email == None or email == "": 
@@ -65,7 +68,7 @@ class _RDFPersonList:
             
             phone = self.parsePhone(self.getSimpleElementText(node, "_3:phone"))
             verboseLog("Found person: ["+str(lastname)+", "+str(firstname)+"]")
-            self.persons.append(_RDFPerson(siteId, email, uid, firstname, lastname, phone))
+            self.persons.append(_RDFPerson(rdfId, siteId, email, uid, firstname, lastname, phone))
             
     def parsePhone(self, phone):
         if phone == None or phone == "":
@@ -103,6 +106,11 @@ class _RDFPersonList:
         siteId = siteIdUri[siteIdUri.rfind("/")+1:len(siteIdUri)]
         return siteId
     
+    def getRdfId(self, node):
+        rdfIdUri = node.getAttribute("rdf:about")
+        rdfId = rdfIdUri[rdfIdUri.rfind("/")+1:len(rdfIdUri)]
+        return rdfId
+    
     def getSimpleElementText(self, node, elemName):
         elemNode = self.getFirstElement(node, elemName)
         if elemNode <> None:
@@ -117,16 +125,99 @@ class _RDFPersonList:
 
 class _RDFPerson:
     
-    def __init__(self, siteId, email, uid, firstname, lastname, phone):
+    def __init__(self, rdfId, siteId, email, uid, firstname, lastname, phone):
+        self.rdfId = rdfId
         self.siteId = siteId
         self.email = email
         self.uid = uid
         self.firstname = firstname
         self.lastname = lastname
         self.phone = phone  
+        
+        
+class _RDFSiteList:
+    
+    def __init__(self, filePath, personList):
+        self.filePath = filePath
+        self.personList = personList
+        self.sites = []
+        self.parse()
+
+    def parse(self):
+        doc = xml.dom.minidom.parse(self.filePath)
+        for node in doc.getElementsByTagName("rdf:Description"):            
+            siteId = self.getSiteId(node)
+            abbrevName = self.getSimpleElementText(node, "_3:abbrevName")
+            staffIdList = self.getStaffIdList(node)
+            title = self.getSimpleElementText(node, "_3:title")
+            pi = self.getPi(node)
+            program = self.getSimpleElementText(node, "_3:program")
+            memberType = self.getSimpleElementText(node, "_3:memberType")
+            verboseLog("Found site: ["+str(abbrevName)+"]")
+            self.sites.append(_RDFSite(siteId, abbrevName, staffIdList, title, pi, program, memberType))
+            
+            
+    def getPi(self, node):
+        piUriNode = self.getFirstElement(node, "_3:pi")
+        if piUriNode <> None:
+            piUri = piUriNode.getAttribute("rdf:resource")
+        else:
+            return None
+        
+        pid = piUri[piUri.rfind("/")+1:len(piUri)]
+        pi = self.getPersonById(pid)     
+        if pi == None: return None
+        return pi.lastname+", "+pi.firstname
+            
+    def getStaffIdList(self, node):
+        staffIdList = []
+        for staffNode in node.getElementsByTagName("_3:staff"):
+            staffIdUri = staffNode.getAttribute("rdf:resource")
+            staffId = staffIdUri[staffIdUri.rfind("/")+1:len(staffIdUri)]
+            staffIdList.append(staffId)
+        return staffIdList
+        
+        
+    def getSiteId(self, node):
+        siteIdUri = node.getAttribute("rdf:resource")
+        siteId = siteIdUri[siteIdUri.rfind("/")+1:len(siteIdUri)]
+        return siteId  
+    
+    def getSimpleElementText(self, node, elemName):
+        elemNode = self.getFirstElement(node, elemName)
+        if elemNode <> None:
+            return elemNode.firstChild.data
+        else:
+            return ""
+    
+    def getFirstElement(self, node, elemName):
+        return node.getElementsByTagName(elemName).item(0)    
+    
+    def getPersonById(self, personId):
+        for person in self.personList:
+            if person.rdfId == personId:
+                return person 
+        return None
+       
+           
+class _RDFSite:
+    
+    def __init__(self, id, abbrevName, staffIdList, title, pi, program, memberType):
+        self.id = id
+        self.abbrevName = abbrevName
+        self.staffIdList = staffIdList
+        self.title = title
+        self.pi = pi
+        self.program = program
+        self.memberType = memberType
+        
            
 def makeGroups(rdfUsersFile, rdfSiteFile, ldapUrl, adminUser, adminPass):
-    return None
+    rdfPersons = _RDFPersonList(rdfUsersFile)
+    rdfSites = _RDFSiteList(rdfSiteFile, rdfPersons.persons)
+    
+    for site in rdfSites.sites:
+        verboseLog("Processing site: ["+site.abbrevName+"]")
     
 def main(argv=None):
     if argv is None:
@@ -160,7 +251,9 @@ def main(argv=None):
         if ldapUser == None or ldapPass == None or ldapUrl == None:
             raise _Usage(_helpMessage)
             
-        rdfUsersFile = ' '.join(args)
+        rdfUsersFile = args[0]
+        rdfSiteFile = args[1]
+        makeGroups(rdfUsersFile, rdfSiteFile, ldapUrl, ldapUser, ldapPass)
 
     except _Usage, err:
         print >>sys.stderr, sys.argv[0].split('/')[-1] + ': ' + str(err.msg)
