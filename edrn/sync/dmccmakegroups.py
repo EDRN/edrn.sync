@@ -11,6 +11,7 @@ import warnings
 import ldap
 import ldap.modlist as modlist
 from rdf import RDFPersonList, RDFSiteList
+from ldap import groupExists
 
 warnings.filterwarnings("ignore")
 _verbose = False
@@ -61,7 +62,7 @@ def _addGroup(ldapUrl, adminUser, adminPass, groupName, staffList):
     ldapConn = ldap.initialize(ldapUrl)
     ldapConn.simple_bind_s(adminUser, adminPass)
 
-    if not _groupExists(ldapConn, groupName):
+    if not groupExists(ldapConn, groupName):
         # construct DN
         dn = u"cn="+groupName+",dc=edrn,dc=jpl,dc=nasa,dc=gov"
         attrs={}
@@ -104,35 +105,6 @@ def _addGroup(ldapUrl, adminUser, adminPass, groupName, staffList):
     ldapConn.unbind_s()            
 
 
-def _groupExists(ldapConn, groupcn):
-    baseDn = "dc=edrn,dc=jpl,dc=nasa,dc=gov"
-    filter = "(&(cn="+groupcn+")(objectClass=groupOfUniqueNames))"
-    attrs=[]
-    try:
-        results = ldapConn.search_s(baseDn, ldap.SCOPE_SUBTREE, filter, attrs)
-        if results <> None and len(results) > 0:
-            return True
-        else:
-            return False
-    except ldap.LDAPError, e:
-        print e.message['info']
-
-
-def _memberExists(ldapConn, groupcn, uid):
-    baseDn = "dc=edrn,dc=jpl,dc=nasa,dc=gov"
-    filter = "(&(cn="+groupcn+")(uniquemember="+uid+",dc=edrn,dc=jpl,dc=nasa,dc=gov))"
-    attrs=[]
-    try:
-        results = ldapConn.search_s(baseDn, ldap.SCOPE_SUBTREE, filter, attrs)
-        if results <> None and len(results) > 0:
-            return True
-        else:
-            return False
-    except ldap.LDAPError, e:
-        print e.message['info']
-    
-    
-    
 def main(argv=None):
     if argv is None:
         argv = sys.argv
