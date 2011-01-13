@@ -45,11 +45,15 @@ def makeGroups(rdfUsersFile, rdfSiteFile, ldapUrl, adminUser, adminPass):
     rdfSites = RDFSiteList(rdfSiteFile, rdfPersons.persons)
     
     for site in rdfSites.sites:
-        print "Processing group: ["+site.abbrevName+"]\n"
-        
         # first need to create group name
-        groupName = str(site.pi.lastname+" "+site.title).strip()
+        if site.pi == None:
+            print "Skipping ingestion of site: ["+site.title+"]: was not able to link to PI.\n"
+            continue
         
+        groupName = site.pi.lastname+" "+site.title
+        groupName = groupName.strip().replace(","," ")
+        
+        print "Processing group: ["+groupName+"]\n"
         # now add group only if it doesn't exist yet
         _addGroup(ldapUrl, adminUser, adminPass, groupName, site.staffList)
 
@@ -67,12 +71,13 @@ def _addGroup(ldapUrl, adminUser, adminPass, groupName, staffList):
         
         memberuidList = []
         for staff in staffList:
-            memberuidList.append(str("uid="+staff.uid+",dc=edrn,dc=jpl,dc=nasa,gov"))
+            if staff <> None:
+                memberuidList.append(str("uid="+staff.uid+",dc=edrn,dc=jpl,dc=nasa,dc=gov"))
         
         attrs['uniquemember'] = memberuidList
         ldif = modlist.addModlist(attrs)
         success=False
-        verboseLog("Creating group: ["+str(ldif)+"]")
+        verboseLog("Creating group: ["+str(ldif)+"]\n")
         try:
             ldapConn.add_s(dn,ldif)
             success=True
@@ -81,6 +86,19 @@ def _addGroup(ldapUrl, adminUser, adminPass, groupName, staffList):
     else:
         # try to add the new members to it
         verboseLog("Group: ["+groupName+"] already exists: attempting to add new members")
+        dn = u"cn="+groupName+",dc=edrn,dc=jpl,dc=nasa,dc=gov"
+        memberuidList = []
+        for staff in staffList:
+            if staff <> None:
+                memberuidList.append(str("uid="+staff.uid+",dc=edrn,dc=jpl,dc=nasa,dc=gov"))
+        mod_attrs = [(ldap.MOD_REPLACE, 'uniquemember', memberuidList)]
+        success=False
+        verboseLog("Replace group members for ["+groupName+"] with ["+str(memberuidList)+"]\n")
+        try:
+            ldapConn.modify_s(dn, mod_attrs)
+            success=True
+        except ldap.LDAPError, e:
+            print e.message['info']
         
     
     ldapConn.unbind_s()            
