@@ -6,6 +6,8 @@
 u'''EDRN generic LDAP functions.
 '''
 
+import ldap
+
 def personExists(ldapConn, uid):
     baseDn = "dc=edrn,dc=jpl,dc=nasa,dc=gov"
     filter="(uid="+uid+")"

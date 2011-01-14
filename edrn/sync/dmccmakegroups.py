@@ -10,7 +10,7 @@ import sys, getopt
 import warnings
 import ldap
 import ldap.modlist as modlist
-from rdf import RDFPersonList, RDFSiteList
+from rdf import RDFPersonList, RDFSiteList, RDFCollaborativeGroupList
 from syncldap import groupExists
 
 warnings.filterwarnings("ignore")
@@ -41,7 +41,7 @@ class _Usage(Exception):
     def __init__(self, msg):
         self.msg = msg
         
-def makeGroups(rdfUsersFile, rdfSiteFile, ldapUrl, adminUser, adminPass):
+def makePIGroups(rdfUsersFile, rdfSiteFile, ldapUrl, adminUser, adminPass):
     rdfPersons = RDFPersonList(rdfUsersFile)
     rdfSites = RDFSiteList(rdfSiteFile, rdfPersons.persons)
     
@@ -54,9 +54,22 @@ def makeGroups(rdfUsersFile, rdfSiteFile, ldapUrl, adminUser, adminPass):
         groupName = site.pi.lastname+" "+site.title
         groupName = groupName.strip().replace(","," ")
         
-        print "Processing group: ["+groupName+"]\n"
+        print "Processing PI group: ["+groupName+"]\n"
         # now add group only if it doesn't exist yet
         _addGroup(ldapUrl, adminUser, adminPass, groupName, site.staffList)
+        
+def makeCollabGroups(rdfUsersFile, rdfCommitteesFile, ldapUrl, adminUser, adminPass):
+    rdfPersons = RDFPersonList(rdfUsersFile)
+    rdfCommittees = RDFCollaborativeGroupList(rdfCommitteesFile, rdfPersons.persons)
+    
+    for committee in rdfCommittees.groups:
+        if committee.groupType <> None and committee.groupType == "Collaborative Group":
+            groupName = committee.title[0:committee.title.rfind("Cancers Research Group")].strip()
+            
+            print "Processing collaborative group: ["+groupName+"]\n"
+            # now add group only if it doesn't exist yet
+            _addGroup(ldapUrl, adminUser, adminPass, groupName, committee.staffList)
+            
 
 def _addGroup(ldapUrl, adminUser, adminPass, groupName, staffList):
     ldapConn = ldap.initialize(ldapUrl)
@@ -139,7 +152,9 @@ def main(argv=None):
             
         rdfUsersFile = args[0]
         rdfSiteFile = args[1]
-        makeGroups(rdfUsersFile, rdfSiteFile, ldapUrl, ldapUser, ldapPass)
+        rdfCommitteesFile = args[2]
+        makePIGroups(rdfUsersFile, rdfSiteFile, ldapUrl, ldapUser, ldapPass)
+        makeCollabGroups(rdfUsersFile, rdfCommitteesFile, ldapUrl, ldapUser, ldapPass)
 
     except _Usage, err:
         print >>sys.stderr, sys.argv[0].split('/')[-1] + ': ' + str(err.msg)

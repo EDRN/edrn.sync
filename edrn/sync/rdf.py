@@ -12,6 +12,39 @@ from xml.dom.minidom import Node
 _defaultPhone = '555-555-5555'
 _defaultEmail = 'unknown@example.com'
 
+    
+def getSimpleElementText(node, elemName):
+    elemNode = getFirstElement(node, elemName)
+    if elemNode <> None:
+        return elemNode.firstChild.data
+    else:
+        return ""
+
+def getFirstElement(node, elemName):
+    return node.getElementsByTagName(elemName).item(0)   
+
+def stripId(node, attr):
+    if node == None: return None
+    idUri = node.getAttribute(attr)
+    id = idUri[idUri.rfind("/")+1:len(idUri)]
+    return id
+
+            
+def getStaffList(node, name, attr, personList):
+    staffList = []
+    for staffNode in node.getElementsByTagName(name):
+        staffId = stripId(staffNode, attr)
+        staffList.append(getPersonById(staffId, personList))
+    return staffList
+
+    
+def getPersonById(personId, personList):
+    if personId == None: return None
+    for person in personList:
+        if person.rdfId == personId:
+            return person 
+    return None
+    
 class RDFPersonList:
     
     def __init__(self, filePath):
@@ -24,16 +57,16 @@ class RDFPersonList:
         for node in doc.getElementsByTagName("rdf:Description"):
             rdfId = self.getRdfId(node)
             siteId = self.getSiteId(node)
-            email = self.stripMailTo(self.getSimpleElementText(node, "_3:mbox"))
+            email = self.stripMailTo(getSimpleElementText(node, "_3:mbox"))
             if email == None or email == "": 
                 email = _defaultEmail
-            uid = self.getSimpleElementText(node, "_3:accountName")
-            firstname = self.getSimpleElementText(node, "_3:givenname")
-            lastname = self.getSimpleElementText(node, "_3:surname")
+            uid = getSimpleElementText(node, "_3:accountName")
+            firstname = getSimpleElementText(node, "_3:givenname")
+            lastname = getSimpleElementText(node, "_3:surname")
             if uid == None or uid == "":
                 uid = self.constructUID(firstname, lastname)
             
-            phone = self.parsePhone(self.getSimpleElementText(node, "_3:phone"))
+            phone = self.parsePhone(getSimpleElementText(node, "_3:phone"))
             self.persons.append(RDFPerson(rdfId, siteId, email, uid, firstname, lastname, phone))
             
     def parsePhone(self, phone):
@@ -68,25 +101,10 @@ class RDFPersonList:
         return email[email.find(":")+1:len(email)]
     
     def getSiteId(self, node):
-        siteIdUri = self.getFirstElement(node, "_4:site").getAttribute("rdf:resource")
-        siteId = siteIdUri[siteIdUri.rfind("/")+1:len(siteIdUri)]
-        return siteId
+        return stripId(getFirstElement(node, "_4:site"),"rdf:resource")
     
     def getRdfId(self, node):
-        rdfIdUri = node.getAttribute("rdf:about")
-        rdfId = rdfIdUri[rdfIdUri.rfind("/")+1:len(rdfIdUri)]
-        return rdfId
-    
-    def getSimpleElementText(self, node, elemName):
-        elemNode = self.getFirstElement(node, elemName)
-        if elemNode <> None:
-            return elemNode.firstChild.data
-        else:
-            return ""
-    
-    def getFirstElement(self, node, elemName):
-        return node.getElementsByTagName(elemName).item(0)
-        
+        return stripId(node, "rdf:about")
             
 
 class RDFPerson:
@@ -113,54 +131,21 @@ class RDFSiteList:
         doc = xml.dom.minidom.parse(self.filePath)
         for node in doc.getElementsByTagName("rdf:Description"):            
             siteId = self.getSiteId(node)
-            abbrevName = self.getSimpleElementText(node, "_3:abbrevName")
-            staffIdList = self.getStaffList(node)
-            title = self.getSimpleElementText(node, "_4:title")
+            abbrevName = getSimpleElementText(node, "_3:abbrevName")
+            staffIdList = getStaffList(node, "_3:staff", "rdf:resource", self.personList)
+            title = getSimpleElementText(node, "_4:title")
             pi = self.getPi(node)
-            program = self.getSimpleElementText(node, "_3:program")
-            memberType = self.getSimpleElementText(node, "_3:memberType")
+            program = getSimpleElementText(node, "_3:program")
+            memberType = getSimpleElementText(node, "_3:memberType")
             self.sites.append(RDFSite(siteId, abbrevName, staffIdList, title, pi, program, memberType))
             
             
     def getPi(self, node):
-        piUriNode = self.getFirstElement(node, "_3:pi")
-        if piUriNode <> None:
-            piUri = piUriNode.getAttribute("rdf:resource")
-        else:
-            return None
-        
-        pid = piUri[piUri.rfind("/")+1:len(piUri)]
-        return self.getPersonById(pid)     
-            
-    def getStaffList(self, node):
-        staffList = []
-        for staffNode in node.getElementsByTagName("_3:staff"):
-            staffIdUri = staffNode.getAttribute("rdf:resource")
-            staffId = staffIdUri[staffIdUri.rfind("/")+1:len(staffIdUri)]
-            staffList.append(self.getPersonById(staffId))
-        return staffList
-        
+        pid = stripId(getFirstElement(node, "_3:pi"), "rdf:resource")
+        return getPersonById(pid, self.personList)     
         
     def getSiteId(self, node):
-        siteIdUri = node.getAttribute("rdf:resource")
-        siteId = siteIdUri[siteIdUri.rfind("/")+1:len(siteIdUri)]
-        return siteId  
-    
-    def getSimpleElementText(self, node, elemName):
-        elemNode = self.getFirstElement(node, elemName)
-        if elemNode <> None:
-            return elemNode.firstChild.data
-        else:
-            return ""
-    
-    def getFirstElement(self, node, elemName):
-        return node.getElementsByTagName(elemName).item(0)    
-    
-    def getPersonById(self, personId):
-        for person in self.personList:
-            if person.rdfId == personId:
-                return person 
-        return None
+        return stripId(node, "rdf:resource")
        
            
 class RDFSite:
@@ -173,3 +158,32 @@ class RDFSite:
         self.pi = pi
         self.program = program
         self.memberType = memberType
+
+class RDFCollaborativeGroupList:
+
+    def __init__(self, filePath, personList):
+        self.filePath = filePath
+        self.personList = personList
+        self.groups = []
+        self.parse()    
+        
+    def parse(self):
+        doc = xml.dom.minidom.parse(self.filePath)
+        for node in doc.getElementsByTagName("rdf:Description"):            
+            groupId = self.getGroupId(node)
+            title = getSimpleElementText(node, "_4:title")
+            staffList = getStaffList(node, "_3:member", "rdf:resource", self.personList)
+            groupType = getSimpleElementText(node, "_3:committeeType")
+            self.groups.append(RDFCollaborativeGroup(groupId, title, staffList, groupType))
+    
+    def getGroupId(self, node):
+        return stripId(node, "rdf:about")
+                
+
+class RDFCollaborativeGroup:
+    
+    def __init__(self, id, title, staffList, groupType):
+        self.id = id
+        self.title = title
+        self.staffList = staffList
+        self.groupType = groupType
