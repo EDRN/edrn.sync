@@ -10,7 +10,7 @@ dmccsync
     Takes a DMCC RDF users file and imports it into the EDRN IC LDAPS server.
 dmccgroupsync
     Takes a DMCC RDF users file and a sites file and imports the associated
-    PI groups into the EDRN IC LDAPS server.
+    PI groups and collaborative groups into the EDRN IC LDAPS server.
 
 For installation instructions, please see docs/INSTALL.txt.
 
