@@ -6,8 +6,10 @@ Changelog
 
 This release adds group creation programs and APIs including the ``dmccgroupsync``
 script which implements Heather Kincaid's algorithm for adding groups and syncing them
-based on the DMCC RDF.
+based on the DMCC RDF. For more information see https://oodt.jpl.nasa.gov/jira/browse/CA-669.
 
+For the issue tracker, see
+http://oodt.jpl.nasa.gov/jira/browse/CA.
 
 0.0.0 - Initial
 ===============
