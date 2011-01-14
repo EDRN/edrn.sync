@@ -17,8 +17,8 @@ edrn.sync
 .. contents::
 
 EDRN Sync provides an API for slurping up DMCC RDF representing
-EDRN users and registering those users into our EDRN IC LDAP
-server.
+EDRN users and groups and registering those users into our EDRN 
+IC LDAP server.
 
 '''
 _keywords = 'edrn sync ldap dmcc informatics center'
