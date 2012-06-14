@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rdf:RDF xmlns:_3='http://xmlns.com/foaf/0.1/' xmlns:_4='http://edrn.nci.nih.gov/rdf/schema.rdf#' xmlns:_5='http://www.w3.org/2001/vcard-rdf/3.0#' xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+    <rdf:Description rdf:about='http://edrn.nci.nih.gov/data/registered-person/1'>
+        <rdf:type rdf:resource='http://edrn.nci.nih.gov/rdf/types.rdf#Person'/>
+        <_3:givenname>Christopher</_3:givenname>
+        <_4:middleName>Alpha</_4:middleName>
+        <_3:surname>Mattmann</_3:surname>
+        <_3:phone>626-975-3130</_3:phone>
+        <_3:mbox>mailto:chris.mattmann@jpl.nasa.gov</_3:mbox>
+        <_5:fax>626-975-3131</_5:fax>
+        <_4:specialty>True Blood</_4:specialty>
+        <_3:img>http://sunset.usc.edu/~mattmann/images/chris-2012.jpeg</_3:img>
+        <_4:edrnTitle>Hanging Around</_4:edrnTitle>
+        <_3:accountName>mattmann</_3:accountName>
+        <_4:site rdf:resource='http://edrn.nci.nih.gov/data/sites/1'/>
+        <_4:addr1>3101 Palm Drive</_4:addr1>
+        <_4:addr2>Suite 3</_4:addr2>
+        <_4:city>Rancho Cucamonga</_4:city>
+        <_4:state>CA</_4:state>
+        <_4:postalCode>91109-9910</_4:postalCode>
+        <_4:country>U.S.A.</_4:country>
+    </rdf:Description>
+    <rdf:Description rdf:about='http://edrn.nci.nih.gov/data/registered-person/2'>
+        <rdf:type rdf:resource='http://edrn.nci.nih.gov/rdf/types.rdf#Person'/>
+        <_3:givenname>Paul</_3:givenname>
+        <_4:middleName>Beta</_4:middleName>
+        <_3:surname>Ramirez</_3:surname>
+        <_3:phone>626-310-6629</_3:phone>
+        <_3:mbox>mailto:paul.ramirez@jpl.nasa.gov</_3:mbox>
+        <_5:fax>626-975-3131</_5:fax>
+        <_4:specialty>EarthCube</_4:specialty>
+        <_3:img>http://www.foxsportsla.com/export/sites/fox-latam/img/11/12/06/paul-ramirez.jpg_1854542250.jpg</_3:img>
+        <_4:edrnTitle>The Registrar</_4:edrnTitle>
+        <_3:accountName>pramirez</_3:accountName>
+        <_4:site rdf:resource='http://edrn.nci.nih.gov/data/sites/1'/>
+        <_4:addr1>3102 Suago St</_4:addr1>
+        <_4:addr2>Suite 4</_4:addr2>
+        <_4:city>Rancho Cucamonga</_4:city>
+        <_4:state>CA</_4:state>
+        <_4:postalCode>91109-9356</_4:postalCode>
+        <_4:country>U.S.A.</_4:country>
+    </rdf:Description>
+    <rdf:Description rdf:about='http://edrn.nci.nih.gov/data/registered-person/3'>
+        <rdf:type rdf:resource='http://edrn.nci.nih.gov/rdf/types.rdf#Person'/>
+        <_3:givenname>Heather</_3:givenname>
+        <_4:middleName>Roth</_4:middleName>
+        <_3:surname>Kincaid</_3:surname>
+        <_3:phone>626-989-2216</_3:phone>
+        <_3:mbox>mailto:heather.kincaid@jpl.nasa.gov</_3:mbox>
+        <_5:fax>626-975-3131</_5:fax>
+        <_4:specialty>Parasailing</_4:specialty>
+        <_3:img>http://i.ytimg.com/vi/kxZT75PR0QM/0.jpg</_3:img>
+        <_4:edrnTitle>The Decider</_4:edrnTitle>
+        <_3:accountName>hkincaid</_3:accountName>
+        <_4:site rdf:resource='http://edrn.nci.nih.gov/data/sites/2'/>
+        <_4:addr1>4101 Timber Mill Road</_4:addr1>
+        <_4:addr2>Suite 9</_4:addr2>
+        <_4:city>Hood River</_4:city>
+        <_4:state>OR</_4:state>
+        <_4:postalCode>83115-2116</_4:postalCode>
+        <_4:country>U.S.A.</_4:country>
+    </rdf:Description>
+</rdf:RDF>
