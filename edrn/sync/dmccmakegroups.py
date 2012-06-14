@@ -63,7 +63,7 @@ def makeCollabGroups(rdfUsersFile, rdfCommitteesFile, ldapUrl, adminUser, adminP
     rdfCommittees = RDFCollaborativeGroupList(rdfCommitteesFile, rdfPersons.persons)
     
     for committee in rdfCommittees.groups:
-        if committee.groupType <> None and committee.groupType == "Collaborative Group":
+        if committee.groupType != None and committee.groupType == "Collaborative Group":
             groupName = committee.title[0:committee.title.rfind("Cancers Research Group")].strip()
             
             print "Processing collaborative group: ["+groupName+"]\n"
@@ -85,7 +85,7 @@ def _addGroup(ldapUrl, adminUser, adminPass, groupName, staffList):
         
         memberuidList = []
         for staff in staffList:
-            if staff <> None:
+            if staff != None:
                 memberuidList.append(str("uid="+staff.uid+",dc=edrn,dc=jpl,dc=nasa,dc=gov"))
         
         attrs['uniquemember'] = memberuidList
@@ -103,7 +103,7 @@ def _addGroup(ldapUrl, adminUser, adminPass, groupName, staffList):
         dn = u"cn="+groupName+",dc=edrn,dc=jpl,dc=nasa,dc=gov"
         memberuidList = []
         for staff in staffList:
-            if staff <> None:
+            if staff != None:
                 memberuidList.append(str("uid="+staff.uid+",dc=edrn,dc=jpl,dc=nasa,dc=gov"))
         mod_attrs = [(ldap.MOD_REPLACE, 'uniquemember', memberuidList)]
         success=False
