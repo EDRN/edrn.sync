@@ -7,3 +7,6 @@ commands on your computer:
 ``dmccsync`` command
     The ``dmccsync`` command lets you slurp up a DMCC RDF file containing users
     that need to be entered into EDRN IC LDAP.
+``dmccgroupsync`` command
+    Takes a DMCC RDF users file and a sites file and imports the associated
+    PI groups and collaborative groups into the EDRN IC LDAPS server.
