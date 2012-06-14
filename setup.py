@@ -59,6 +59,7 @@ setup(
     include_package_data=True,
     zip_safe=True,
     test_suite='edrn.sync.tests',
+    extras_require={'test': ['unittest2']},
     entry_points={
         'console_scripts': [
             'dmccsync = edrn.sync.dmccsync:main',
@@ -75,5 +76,6 @@ setup(
         'setuptools',
         'oodt',
         'python-ldap',
+        'rdflib',
     ],
 )
