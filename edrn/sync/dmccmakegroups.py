@@ -16,7 +16,7 @@ from syncldap import groupExists
 warnings.filterwarnings("ignore")
 _verbose = False
 _helpMessage = '''
-Usage: dmccgroupsync [-v] [-u LDAP DN] [-p password] [-l LDAP URL] user RDF file site RDF file...
+Usage: dmccgroupsync [-v] [-u LDAP DN] [-p password] [-l LDAP URL] RDF-USER-URL RDF-SITE-URL RDF-COMMITTEE-URL
 
 Options:
 -v, --verbose

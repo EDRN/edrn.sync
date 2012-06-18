@@ -24,7 +24,7 @@ _defaultEmail = 'unknown@example.com'
 _defaultDesc = 'imported via EDRN dmccsync at '
 _defaultPhone = '555-555-5555'
 _helpMessage = '''
-Usage: dmccsync [-v] [-u LDAP DN] [-p password] [-l LDAP URL] RDF file path...
+Usage: dmccsync [-v] [-u LDAP DN] [-p password] [-l LDAP URL] RDF-URL...
 
 Options:
 -v, --verbose
