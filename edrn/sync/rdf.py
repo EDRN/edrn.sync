@@ -48,13 +48,13 @@ def getPersonById(personId, personList):
     
 class _RDFList(object):
     '''An abstract list of objects described by RDF.'''
-    def __init__(self, filePath):
-        self.filePath = filePath
+    def __init__(self, url):
+        self.url = url
     def parseRDF(self):
         '''Parse our RDF file and return a mapping of statements of the form {s→{p→o}} where s is a subject's
         URI, p is a predicate URI, and o is a list of objects that may be literals or URI references.'''
         graph = rdflib.ConjunctiveGraph()
-        graph.parse('file:' + self.filePath)
+        graph.parse(self.url)
         statements = {}
         for s, p, o in graph:
             predicates = statements.get(s, {})
@@ -75,8 +75,8 @@ class _RDFList(object):
 
 class RDFPersonList(_RDFList):
     '''A list of EDRN people from RDF.'''
-    def __init__(self, filePath):
-        super(RDFPersonList, self).__init__(filePath)
+    def __init__(self, url):
+        super(RDFPersonList, self).__init__(url)
         self.persons = []
         self.parse()
     def parse(self):
@@ -141,8 +141,8 @@ class RDFPerson(object):
         
 class RDFSiteList(_RDFList):
     '''A list of EDRN sites from RDF.'''
-    def __init__(self, filePath, personList):
-        super(RDFSiteList, self).__init__(filePath)
+    def __init__(self, url, personList):
+        super(RDFSiteList, self).__init__(url)
         self.personList = personList
         self.sites = []
         self.parse()

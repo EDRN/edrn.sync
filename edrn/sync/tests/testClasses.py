@@ -11,15 +11,15 @@ import xml.parsers.expat, xml.sax
 
 class _RDFBaseTestCase(unittest.TestCase):
     '''Abstract testing base for RDF-list generators. Subclasses must implement ``constructTestList``.'''
-    def constructTestList(self, filePath):
-        '''Construct the correct RDF-list reading data from the given ``filePath``.'''
+    def constructTestList(self, url):
+        '''Construct the correct RDF-list reading data from the given ``url``.'''
         raise NotImplementedError('Subclasses must implement ``constructTestList``')
     def testNonexistentFile(self):
         '''Ensure that constructing an RDF-list on a nonexistent file fails and raises an ``IOError``.'''
         self.assertRaises(IOError, self.constructTestList, '/some/non/existent/file.rdf')
     def testBadXMLFile(self):
         '''Make certain that making an RDF-list on a file with bad XML in it fails.'''
-        badFile = pkg_resources.resource_filename(__name__, 'data/bad.xml')
+        badFile = 'file:' + pkg_resources.resource_filename(__name__, 'data/bad.xml')
         with self.assertRaises(Exception) as caught:
             self.constructTestList(badFile)
         # Can't assume what XML parser is being used...
@@ -32,17 +32,17 @@ class _RDFBaseTestCase(unittest.TestCase):
             self.assertEquals(xml.parsers.expat.errors.XML_ERROR_INVALID_TOKEN, xml.parsers.expat.ErrorString(ex.code))
     def testBadRDFFile(self):
         '''Check that making an RDF-list on a file with good XML but no RDF fails.'''
-        badFile = pkg_resources.resource_filename(__name__, 'data/bad.rdf')
+        badFile = 'file:' + pkg_resources.resource_filename(__name__, 'data/bad.rdf')
         l = self.constructTestList(badFile)
         self.assertEquals(0, len(l))
 
 class RDFPersonListTest(_RDFBaseTestCase):
     '''Test the RDFPersonList class.'''
-    def constructTestList(self, filePath):
-        return RDFPersonList(filePath)
+    def constructTestList(self, url):
+        return RDFPersonList(url)
     def testGoodRDFFile(self):
         '''Confirm that we can read a good file of users RDF.'''
-        goodFile = pkg_resources.resource_filename(__name__, 'data/users.rdf')
+        goodFile = 'file:' + pkg_resources.resource_filename(__name__, 'data/users.rdf')
         l = RDFPersonList(goodFile)
         self.assertEquals(3, len(l))
         heathers = [i for i in l if i.uid == 'hkincaid']
@@ -61,12 +61,12 @@ class RDFSiteListTest(_RDFBaseTestCase):
     '''Test the RDFSiteList class.'''
     def setUp(self):
         super(RDFSiteListTest, self).setUp()
-        self.personList = RDFPersonList(pkg_resources.resource_filename(__name__, 'data/users.rdf'))
-    def constructTestList(self, filePath):
-        return RDFSiteList(filePath, self.personList)
+        self.personList = RDFPersonList('file:' + pkg_resources.resource_filename(__name__, 'data/users.rdf'))
+    def constructTestList(self, url):
+        return RDFSiteList(url, self.personList)
     def testGoodRDFFile(self):
         '''Verify that we can read a good file of site RDF.'''
-        goodFile = pkg_resources.resource_filename(__name__, 'data/sites.rdf')
+        goodFile = 'file:' + pkg_resources.resource_filename(__name__, 'data/sites.rdf')
         l = self.constructTestList(goodFile)
         self.assertEquals(2, len(l))
         jpls = [i for i in l if i.abbrevName == 'JPL']
@@ -85,12 +85,12 @@ class RDFCollaborativeGroupListTest(_RDFBaseTestCase):
     '''Test the RDFCollaborativeGroupList class.'''
     def setUp(self):
         super(RDFCollaborativeGroupListTest, self).setUp()
-        self.personList = RDFPersonList(pkg_resources.resource_filename(__name__, 'data/users.rdf'))
-    def constructTestList(self, filePath):
-        return RDFCollaborativeGroupList(filePath, self.personList)
+        self.personList = RDFPersonList('file:' + pkg_resources.resource_filename(__name__, 'data/users.rdf'))
+    def constructTestList(self, url):
+        return RDFCollaborativeGroupList(url, self.personList)
     def testGoodRDFFile(self):
         '''Establish that we can read a good file of committee RDF.'''
-        goodFile = pkg_resources.resource_filename(__name__, 'data/committees.rdf')
+        goodFile = 'file:' + pkg_resources.resource_filename(__name__, 'data/committees.rdf')
         l = self.constructTestList(goodFile)
         self.assertEquals(1, len(l))
         sc = l[0]
