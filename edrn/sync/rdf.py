@@ -5,33 +5,39 @@
 
 '''EDRN RDF data structures for use in the sync tools.'''
 
-import xml.dom.minidom
+from rdflib.term import URIRef
+import rdflib
 import re
-from xml.dom.minidom import Node
 
+# Bogus phone number if we can't figure one out
 _defaultPhone = '555-555-5555'
-_defaultEmail = 'unknown@example.com'
-    
-def getSimpleElementText(node, elemName):
-    '''Get the text from the first element named ``elemName`` from under the ``node``, or the empty string if
-    the named isn't found.'''
-    elemNode = getFirstElement(node, elemName)
-    return elemName.firstChild.data if elemNode != None else ''
 
-def getFirstElement(node, elemName):
-    '''Get the first XML element named ``elemName`` that's under ``node``.'''
-    return node.getElementsByTagName(elemName).item(0)   
+# General predicate URIs
+_typeURI  = URIRef(u'http://www.w3.org/1999/02/22-rdf-syntax-ns#type')
+_titleURI = URIRef(u'http://purl.org/dc/terms/title')
 
-def getStaffList(node, name, attr, personList):
-    '''Get the staff members identified by the node named ``name`` and attribute ``attr`` under the XML
-    node ``node`` and looking up people in ``personList``.'''
-    staffList = []
-    for staffNode in node.getElementsByTagName(name):
-        staffId = staffNode.getAttribute(attr)
-        staffList.append(getPersonById(staffId, personList))
-    return staffList
+# Predicate URIs for people
+_emailURI      = URIRef(u'http://xmlns.com/foaf/0.1/mbox')
+_givennameURI  = URIRef(u'http://xmlns.com/foaf/0.1/givenname')
+_personTypeURI = URIRef(u'http://edrn.nci.nih.gov/rdf/types.rdf#Person')
+_phoneURI      = URIRef(u'http://xmlns.com/foaf/0.1/phone')
+_siteURI       = URIRef(u'http://edrn.nci.nih.gov/rdf/schema.rdf#site')
+_surnameURI    = URIRef(u'http://xmlns.com/foaf/0.1/surname')
+_userIDURI     = URIRef(u'http://xmlns.com/foaf/0.1/accountName')
 
-    
+# Predicate URIs for sites
+_abbrevNameURI = URIRef(u'http://edrn.nci.nih.gov/rdf/schema.rdf#abbrevName')
+_memberTypeURI = URIRef(u'http://edrn.nci.nih.gov/rdf/schema.rdf#memberType')
+_piURI         = URIRef(u'http://edrn.nci.nih.gov/rdf/schema.rdf#pi')
+_programURI    = URIRef(u'http://edrn.nci.nih.gov/rdf/schema.rdf#program')
+_siteTypeURI   = URIRef(u'http://edrn.nci.nih.gov/rdf/types.rdf#Site')
+_staffURI      = URIRef(u'http://edrn.nci.nih.gov/rdf/schema.rdf#staff')
+
+# Predicate URIs for committees
+_committeeTypeURI = URIRef(u'http://edrn.nci.nih.gov/rdf/types.rdf#Committee')
+_groupTypeURI     = URIRef(u'http://edrn.nci.nih.gov/xml/rdf/edrn.rdf#committeeType')
+_memberURI        = URIRef(u'http://edrn.nci.nih.gov/xml/rdf/edrn.rdf#member')
+
 def getPersonById(personId, personList):
     '''Get the person with matching ``personId`` out of ``personList``, or None if not found.'''
     if personId == None: return None
@@ -40,28 +46,51 @@ def getPersonById(personId, personList):
             return person 
     return None
     
-class RDFPersonList(object):
-    '''A list of EDRN people from RDF.'''
+class _RDFList(object):
+    '''An abstract list of objects described by RDF.'''
     def __init__(self, filePath):
         self.filePath = filePath
+    def parseRDF(self):
+        '''Parse our RDF file and return a mapping of statements of the form {s→{p→o}} where s is a subject's
+        URI, p is a predicate URI, and o is a list of objects that may be literals or URI references.'''
+        graph = rdflib.ConjunctiveGraph()
+        graph.parse('file:' + self.filePath)
+        statements = {}
+        for s, p, o in graph:
+            predicates = statements.get(s, {})
+            objects = predicates.get(p, [])
+            objects.append(o)
+            predicates[p] = objects
+            statements[s] = predicates
+        return statements
+    def getRDFTypeURI(self, predicates):
+        '''Get the type of the object being represented by the ``predicates``.  Return None if there's no type URI
+        predicate at all.'''
+        values = predicates.get(_typeURI, [])
+        return values[0] if values else None
+    def getSingleValue(self, predicateURI, predicates):
+        '''Get the first value in the ``predicates`` with the given ``predicateURI`` or None if there is no such item.'''
+        values = predicates.get(predicateURI, [])
+        return unicode(values[0]) if values else None
+
+class RDFPersonList(_RDFList):
+    '''A list of EDRN people from RDF.'''
+    def __init__(self, filePath):
+        super(RDFPersonList, self).__init__(filePath)
         self.persons = []
         self.parse()
     def parse(self):
-        doc = xml.dom.minidom.parse(self.filePath)
-        for node in doc.getElementsByTagName("rdf:Description"):
-            rdfId = self.getRdfId(node)
-            siteId = self.getSiteId(node)
-            email = self.stripMailTo(getSimpleElementText(node, "_3:mbox"))
-            if email == None or email == "": 
-                email = _defaultEmail
-            uid = getSimpleElementText(node, "_3:accountName")
-            firstname = getSimpleElementText(node, "_3:givenname")
-            lastname = getSimpleElementText(node, "_3:surname")
-            if uid == None or uid == "":
-                uid = self.constructUID(firstname, lastname)
-            
-            phone = self.parsePhone(getSimpleElementText(node, "_3:phone"))
-            self.persons.append(RDFPerson(rdfId, siteId, email, uid, firstname, lastname, phone))
+        statements = self.parseRDF()
+        for subj, preds in statements.iteritems():
+            if self.getRDFTypeURI(preds) != _personTypeURI: continue
+            uid = self.getSingleValue(_userIDURI, preds)
+            if not uid: continue
+            email = self.stripMailTo(self.getSingleValue(_emailURI, preds))
+            givenname, surname = self.getSingleValue(_givennameURI, preds), self.getSingleValue(_surnameURI, preds)
+            siteURI = self.getSingleValue(_siteURI, preds)
+            phone = self.parsePhone(self.getSingleValue(_phoneURI, preds))
+            person = RDFPerson(unicode(subj), siteURI, email, uid, givenname, surname, phone)
+            self.persons.append(person)
     def parsePhone(self, phone):
         if phone == None or phone == "":
             return _defaultPhone
@@ -82,19 +111,8 @@ class RDFPersonList(object):
         except AttributeError, e:
             print e   
         return parsedPhone
-    def constructUID(self, firstname, lastname):
-        newuid = (firstname[0:1]+lastname).lower()
-        # take care of people with ,'s in their user ids
-        if newuid.find(",") != -1:
-            newuid = newuid[0:newuid.find(",")]
-        return newuid
     def stripMailTo(self, email):
         return email[email.find(":")+1:len(email)]
-    def getSiteId(self, node):
-        elem = getFirstElement(node, '_4:site')
-        return None if not elem else elem.getAttribute('rdf:resource')
-    def getRdfId(self, node):
-        return node.getAttribute('rdf:about')
     def __len__(self):
         return len(self.persons)
     def __add__(self, i):
@@ -121,30 +139,28 @@ class RDFPerson(object):
         self.lastname = lastname
         self.phone = phone  
         
-class RDFSiteList(object):
+class RDFSiteList(_RDFList):
     '''A list of EDRN sites from RDF.'''
     def __init__(self, filePath, personList):
-        self.filePath = filePath
+        super(RDFSiteList, self).__init__(filePath)
         self.personList = personList
         self.sites = []
         self.parse()
     def parse(self):
-        doc = xml.dom.minidom.parse(self.filePath)
-        for node in doc.getElementsByTagName("rdf:Description"):            
-            siteId = self.getSiteId(node)
-            abbrevName = getSimpleElementText(node, "_3:abbrevName")
-            staffIdList = getStaffList(node, "_3:staff", "rdf:resource", self.personList)
-            title = getSimpleElementText(node, "_4:title")
-            pi = self.getPi(node)
-            program = getSimpleElementText(node, "_3:program")
-            memberType = getSimpleElementText(node, "_3:memberType")
-            self.sites.append(RDFSite(siteId, abbrevName, staffIdList, title, pi, program, memberType))
-    def getPi(self, node):
-        elem = getFirstElement(node, '_3:pi')
-        pid = elem.getAttribute('rdf:resource') if elem else None
-        return getPersonById(pid, self.personList) if pid else None
-    def getSiteId(self, node):
-        return node.getAttribute('rdf:about')
+        statements = self.parseRDF()
+        for subj, preds in statements.iteritems():
+            if self.getRDFTypeURI(preds) != _siteTypeURI: continue
+            title = self.getSingleValue(_titleURI, preds)
+            abbrevName = self.getSingleValue(_abbrevNameURI, preds)
+            program = self.getSingleValue(_programURI, preds)
+            memberType = self.getSingleValue(_memberTypeURI, preds)
+            pi = getPersonById(self.getSingleValue(_piURI, preds), self.personList)
+            staff = []
+            for staffURI in preds.get(_staffURI, []):
+                person = getPersonById(unicode(staffURI), self.personList)
+                if person: staff.append(person)
+            site = RDFSite(unicode(subj), abbrevName, staff, title, pi, program, memberType)
+            self.sites.append(site)
     def __len__(self):
         return len(self.sites)
     def __add__(self, i):
@@ -160,7 +176,6 @@ class RDFSiteList(object):
     def __contains__(self, item):
         return item in self.sites
 
- 
 class RDFSite(object):
     '''An EDRN site.'''
     def __init__(self, id, abbrevName, staffList, title, pi, program, memberType):
@@ -172,23 +187,25 @@ class RDFSite(object):
         self.program = program
         self.memberType = memberType
 
-class RDFCollaborativeGroupList(object):
+class RDFCollaborativeGroupList(_RDFList):
     '''A list of collaborative groups from RDF.'''
     def __init__(self, filePath, personList):
-        self.filePath = filePath
+        super(RDFCollaborativeGroupList, self).__init__(filePath)
         self.personList = personList
         self.groups = []
         self.parse()
     def parse(self):
-        doc = xml.dom.minidom.parse(self.filePath)
-        for node in doc.getElementsByTagName("rdf:Description"):            
-            groupId = self.getGroupId(node)
-            title = getSimpleElementText(node, "_4:title")
-            staffList = getStaffList(node, "_3:member", "rdf:resource", self.personList)
-            groupType = getSimpleElementText(node, "_3:committeeType")
-            self.groups.append(RDFCollaborativeGroup(groupId, title, staffList, groupType))
-    def getGroupId(self, node):
-        return node.getAttribute('rdf:about')
+        statements = self.parseRDF()
+        for subj, preds in statements.iteritems():
+            if self.getRDFTypeURI(preds) != _committeeTypeURI: continue
+            title = self.getSingleValue(_titleURI, preds)
+            groupType = self.getSingleValue(_groupTypeURI, preds)
+            staff = []
+            for staffURI in preds.get(_memberURI, preds):
+                person = getPersonById(unicode(staffURI), self.personList)
+                if person: staff.append(person)
+            cg = RDFCollaborativeGroup(unicode(subj), title, staff, groupType)
+            self.groups.append(cg)
     def __len__(self):
         return len(self.groups)
     def __add__(self, i):
