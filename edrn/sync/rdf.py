@@ -112,7 +112,7 @@ class RDFPersonList(_RDFList):
             print e   
         return parsedPhone
     def stripMailTo(self, email):
-        return email[email.find(":")+1:len(email)]
+        return None if email is None else email[email.find(":")+1:len(email)]
     def __len__(self):
         return len(self.persons)
     def __add__(self, i):
