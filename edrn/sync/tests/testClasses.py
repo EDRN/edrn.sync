@@ -55,7 +55,13 @@ class RDFPersonListTest(_RDFBaseTestCase):
         self.assertEquals('Heather', heather.firstname)
         self.assertEquals('Kincaid', heather.lastname)
         self.assertEquals('626-989-2216', heather.phone)
-
+    def testPeopleWithoutEmail(self):
+        '''Test to see if we can handle people without email addresses.'''
+        personWithoutEmail = 'file:' + pkg_resources.resource_filename(__name__, 'data/no-email.rdf')
+        l = RDFPersonList(personWithoutEmail)
+        self.assertEquals(1, len(l))
+        person = l[0]
+        self.assertEquals('churchill', person.uid)
 
 class RDFSiteListTest(_RDFBaseTestCase):
     '''Test the RDFSiteList class.'''

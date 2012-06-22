@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rdf:RDF xmlns:_3='http://xmlns.com/foaf/0.1/' xmlns:_4='http://edrn.nci.nih.gov/rdf/schema.rdf#' xmlns:_5='http://www.w3.org/2001/vcard-rdf/3.0#' xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+    <rdf:Description rdf:about='http://edrn.nci.nih.gov/data/registered-person/1'>
+        <rdf:type rdf:resource='http://edrn.nci.nih.gov/rdf/types.rdf#Person'/>
+        <_3:givenname>Winston</_3:givenname>
+        <_4:middleName>Leonard</_4:middleName>
+        <_3:surname>Churchill</_3:surname>
+        <_3:phone>+44 020 7219 3000</_3:phone>
+        <_4:specialty>World War II</_4:specialty>
+        <_4:edrnTitle>Prime Minister</_4:edrnTitle>
+        <_3:accountName>churchill</_3:accountName>
+        <_4:addr1>10 Downing Street</_4:addr1>
+        <_4:addr2>Box 1</_4:addr2>
+        <_4:city>London</_4:city>
+        <_4:postalCode></_4:postalCode>
+        <_4:country>UK</_4:country>
+    </rdf:Description>
+</rdf:RDF>
