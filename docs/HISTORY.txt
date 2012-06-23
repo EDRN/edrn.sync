@@ -1,6 +1,12 @@
 Changelog
 *********
 
+1.0.1 — Fixed URL
+=================
+
+This release fixes the download URL of the package.
+
+
 1.0.0 - All Official-Like
 =========================
 
@@ -17,6 +23,7 @@ based on the DMCC RDF. For more information see https://oodt.jpl.nasa.gov/jira/b
 
 For the issue tracker, see
 http://oodt.jpl.nasa.gov/jira/browse/CA.
+
 
 0.0.0 - Initial
 ===============

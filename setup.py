@@ -52,7 +52,7 @@ setup(
     author='Chris Mattmann',
     author_email='chris.a.mattmann@jpl.nasa.gov',
     url='http://cancer.jpl.nasa.gov/',
-    download_url='http://cancer.jpl.nasa.gov/dist/edrn-sync',
+    download_url='http://oodt.jpl.nasa.gov/dist/edrn-sync',
     license=read('docs', 'LICENSE.txt'),
     packages=find_packages(exclude=['ez_setup']),
     namespace_packages=['edrn'],
