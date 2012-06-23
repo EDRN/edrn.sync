@@ -1,7 +1,7 @@
 Changelog
 *********
 
-1.0.1 — Fixed URL
+1.0.1 - Fixed URL
 =================
 
 This release fixes the download URL of the package.
