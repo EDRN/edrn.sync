@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
-# Copyright 2010 California Institute of Technology. ALL RIGHTS
+# Copyright 2010–2012 California Institute of Technology. ALL RIGHTS
 # RESERVED. U.S. Government Sponsorship acknowledged.
 
 import os.path
@@ -8,7 +8,7 @@ from distribute_setup import use_setuptools
 use_setuptools()
 from setuptools import setup, find_packages
 
-version = '0.0.2'
+version = '1.0.0'
 
 _descr = u'''**********
 edrn.sync

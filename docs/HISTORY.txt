@@ -1,8 +1,11 @@
 Changelog
 *********
 
-0.0.2 - Current Development
-===========================
+1.0.0 - All Official-Like
+=========================
+
+This release marks an official release of edrn.sync for use with the EDRN
+Directory Service.
 
 
 0.0.1 - Kumbaya
@@ -18,7 +21,7 @@ http://oodt.jpl.nasa.gov/jira/browse/CA.
 0.0.0 - Initial
 ===============
 
-This is an initial release of EDRN (_EDRN) Sync Services supporting minimal ``dmccsync``
+This is an initial release of EDRN (EDRN_) Sync Services supporting minimal ``dmccsync``
 functionality.
 
 
