@@ -103,8 +103,10 @@ class RDFCollaborativeGroupListTest(_RDFBaseTestCase):
         self.assertEquals('http://edrn.nci.nih.gov/data/committees/1', sc.id)
         self.assertEquals('Steering Committee', sc.title)
         self.assertEquals('Committee', sc.groupType)
-        self.assertEquals(1, len(sc.staffList))
-        self.assertEquals('Kincaid', sc.staffList[0].lastname)
+        self.assertEquals(3, len(sc.staffList))
+        expected = set(['Kincaid', 'Mattmann', 'Ramirez'])
+        got = set([i.lastname for i in sc.staffList])
+        self.assertEquals(expected, got, 'Members of committee incorrect, expected %r, got %r' % (expected, got))
 
 def test_suite():
     return unittest.TestSuite([
