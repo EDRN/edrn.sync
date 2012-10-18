@@ -37,6 +37,11 @@ _staffURI      = URIRef(u'http://edrn.nci.nih.gov/rdf/schema.rdf#staff')
 _committeeTypeURI = URIRef(u'http://edrn.nci.nih.gov/rdf/types.rdf#Committee')
 _groupTypeURI     = URIRef(u'http://edrn.nci.nih.gov/xml/rdf/edrn.rdf#committeeType')
 _memberURI        = URIRef(u'http://edrn.nci.nih.gov/xml/rdf/edrn.rdf#member')
+_chairURI         = URIRef(u'http://edrn.nci.nih.gov/xml/rdf/edrn.rdf#chair')
+_coChairURI       = URIRef(u'http://edrn.nci.nih.gov/xml/rdf/edrn.rdf#coChair')
+_consultantURI    = URIRef(u'http://edrn.nci.nih.gov/xml/rdf/edrn.rdf#consultant')
+_allMemberURIs    = (_memberURI, _chairURI, _coChairURI, _consultantURI)
+
 
 def getPersonById(personId, personList):
     '''Get the person with matching ``personId`` out of ``personList``, or None if not found.'''
@@ -200,10 +205,11 @@ class RDFCollaborativeGroupList(_RDFList):
             if self.getRDFTypeURI(preds) != _committeeTypeURI: continue
             title = self.getSingleValue(_titleURI, preds)
             groupType = self.getSingleValue(_groupTypeURI, preds)
-            staff = []
-            for staffURI in preds.get(_memberURI, preds):
-                person = getPersonById(unicode(staffURI), self.personList)
-                if person: staff.append(person)
+            staff = set()
+            for predicateURI in _allMemberURIs:
+                for staffURI in preds.get(predicateURI, preds):
+                    person = getPersonById(unicode(staffURI), self.personList)
+                    if person: staff.add(person)
             cg = RDFCollaborativeGroup(unicode(subj), title, staff, groupType)
             self.groups.append(cg)
     def __len__(self):
