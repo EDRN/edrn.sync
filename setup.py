@@ -37,10 +37,10 @@ _classifiers = [
 ]
 
 def read(*rnames):
-    return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
+    return unicode(open(os.path.join(os.path.dirname(__file__), *rnames), 'rb').read(), 'utf-8')
 
-long_description = _descr + read('docs', 'INSTALL.txt') + '\n' + read('docs', 'USE.txt') + '\n' + read('docs', 'HISTORY.txt') + '\n'
-open('doc.txt', 'w').write(long_description)
+long_description = _descr + read('docs', 'INSTALL.txt') + u'\n' + read('docs', 'USE.txt') + u'\n' + read('docs', 'HISTORY.txt')
+open('doc.txt', 'wb').write(long_description.encode('utf-8'))
 
 setup(
     name='edrn.sync',
