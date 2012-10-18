@@ -1,6 +1,15 @@
 Changelog
 *********
 
+1.0.2 - Where's My Chair?
+=========================
+
+This release addresses the following issues:
+
+• CA-1020 - dmccgroupsync script ignores chair, cochair, consultant; it adds
+  only "member" to collaborative groups
+
+
 1.0.1 - Fixed URL
 =================
 
