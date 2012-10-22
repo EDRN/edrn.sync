@@ -90,31 +90,29 @@ def _addGroup(ldapUrl, adminUser, adminPass, groupName, staffList):
         
         attrs['uniquemember'] = memberuidList
         ldif = modlist.addModlist(attrs)
-        success=False
         verboseLog("Creating group: ["+str(ldif)+"]\n")
         try:
             ldapConn.add_s(dn,ldif)
-            success=True
         except ldap.LDAPError, e:
             print e.message['info']        
     else:
         # try to add the new members to it
-        verboseLog("Group: ["+groupName+"] already exists: attempting to add new members")
+        verboseLog("Group: ["+groupName+"] already exists: attempting to update members")
         dn = u"cn="+groupName+",dc=edrn,dc=jpl,dc=nasa,dc=gov"
-        memberuidList = []
+        results = ldapConn.search_ext_s('dc=edrn,dc=jpl,dc=nasa,dc=gov', ldap.SCOPE_ONELEVEL, '(cn=%s)' % groupName,
+            ['uniquemember'])
+        members = set()
+        for resultDN, attrs in results:
+            if dn != resultDN: continue
+            members = members.union(attrs['uniquemember'])
         for staff in staffList:
-            if staff != None:
-                memberuidList.append(str("uid="+staff.uid+",dc=edrn,dc=jpl,dc=nasa,dc=gov"))
-        mod_attrs = [(ldap.MOD_REPLACE, 'uniquemember', memberuidList)]
-        success=False
-        verboseLog("Replace group members for ["+groupName+"] with ["+str(memberuidList)+"]\n")
+            members.add('uid=' + str(staff.uid) + ',dc=edrn,dc=jpl,dc=nasa,dc=gov')
+        mod_attrs = [(ldap.MOD_REPLACE, 'uniquemember', list(members))]
+        verboseLog("Replace group members for ["+groupName+"] with ["+str(members)+"]\n")
         try:
             ldapConn.modify_s(dn, mod_attrs)
-            success=True
         except ldap.LDAPError, e:
             print e.message['info']
-        
-    
     ldapConn.unbind_s()            
 
 

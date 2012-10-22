@@ -13,7 +13,7 @@ def personExists(ldapConn, uid):
     searchFilter = "(uid="+uid+")"
     attrs = []
     try:
-        results = ldapConn.search_s(baseDn, ldap.SCOPE_SUBTREE, searchFilter, attrs)
+        results = ldapConn.search_s(baseDn, ldap.SCOPE_ONELEVEL, searchFilter, attrs)
         if results != None and len(results) > 0:
             return True
         else:
@@ -28,7 +28,7 @@ def groupExists(ldapConn, groupcn):
     searchFilter = "(&(cn="+groupcn+")(objectClass=groupOfUniqueNames))"
     attrs = []
     try:
-        results = ldapConn.search_s(baseDn, ldap.SCOPE_SUBTREE, searchFilter, attrs)
+        results = ldapConn.search_s(baseDn, ldap.SCOPE_ONELEVEL, searchFilter, attrs)
         if results != None and len(results) > 0:
             return True
         else:
@@ -42,7 +42,7 @@ def memberExists(ldapConn, groupcn, uid):
     searchFilter = "(&(cn="+groupcn+")(uniquemember="+uid+",dc=edrn,dc=jpl,dc=nasa,dc=gov))"
     attrs = []
     try:
-        results = ldapConn.search_s(baseDn, ldap.SCOPE_SUBTREE, searchFilter, attrs)
+        results = ldapConn.search_s(baseDn, ldap.SCOPE_ONELEVEL, searchFilter, attrs)
         if results != None and len(results) > 0:
             return True
         else:

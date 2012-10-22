@@ -1,12 +1,20 @@
 Changelog
 *********
 
+1.0.3 - Holding Onto Heather's Changes
+======================================
+
+This release addresses the following issue:
+
+* CA-1022 - Preserve people manually added to groups
+
+
 1.0.2 - Where's My Chair?
 =========================
 
 This release addresses the following issues:
 
-• CA-1020 - dmccgroupsync script ignores chair, cochair, consultant; it adds
+* CA-1020 - dmccgroupsync script ignores chair, cochair, consultant; it adds
   only "member" to collaborative groups
 
 
