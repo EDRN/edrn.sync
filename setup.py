@@ -8,7 +8,7 @@ from distribute_setup import use_setuptools
 use_setuptools()
 from setuptools import setup, find_packages
 
-version = '1.0.3'
+version = '1.0.4'
 
 _descr = u'''**********
 edrn.sync
