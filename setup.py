@@ -6,7 +6,7 @@
 import os.path
 from setuptools import setup, find_packages
 
-version = '1.0.4'
+version = '1.0.5'
 
 _descr = u'''**********
 edrn.sync
