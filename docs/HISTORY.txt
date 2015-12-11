@@ -1,6 +1,13 @@
 Changelog
 *********
 
+1.0.4 — Packaging
+=================
+
+This release updates the package to be compatible with PEP-470 and updates
+zc.buildout & setuptools compatibility.
+
+
 1.0.3 - Holding Onto Heather's Changes
 ======================================
 
