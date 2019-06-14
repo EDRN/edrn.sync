@@ -25,7 +25,10 @@ def personExists(ldapConn, uid):
 
 def groupExists(ldapConn, groupcn):
     baseDn = "dc=edrn,dc=jpl,dc=nasa,dc=gov"
-    searchFilter = "(&(cn="+groupcn+")(objectClass=groupOfUniqueNames))"
+    try:
+        searchFilter = str("(&(cn="+groupcn+")(objectClass=groupOfUniqueNames))")
+    except UnicodeEncodeError:
+        return True
     attrs = []
     try:
         results = ldapConn.search_s(baseDn, ldap.SCOPE_ONELEVEL, searchFilter, attrs)

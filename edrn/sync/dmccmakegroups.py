@@ -99,8 +99,11 @@ def _addGroup(ldapUrl, adminUser, adminPass, groupName, staffList):
         # try to add the new members to it
         verboseLog("Group: ["+groupName+"] already exists: attempting to update members")
         dn = u"cn="+groupName+",dc=edrn,dc=jpl,dc=nasa,dc=gov"
-        results = ldapConn.search_ext_s('dc=edrn,dc=jpl,dc=nasa,dc=gov', ldap.SCOPE_ONELEVEL, '(cn=%s)' % groupName,
-            ['uniquemember'])
+        try:
+            results = ldapConn.search_ext_s('dc=edrn,dc=jpl,dc=nasa,dc=gov', ldap.SCOPE_ONELEVEL, '(cn=%s)' % groupName,
+                ['uniquemember'])
+        except UnicodeEncodeError:
+            return
         members = set()
         for resultDN, attrs in results:
             if dn != resultDN: continue
