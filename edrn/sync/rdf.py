@@ -10,7 +10,7 @@ import rdflib
 import re
 
 # Bogus phone number if we can't figure one out
-_defaultPhone = '555-555-5555'
+_defaultPhone = '+1 555 555 5555'
 
 # General predicate URIs
 _typeURI  = URIRef(u'http://www.w3.org/1999/02/22-rdf-syntax-ns#type')
