@@ -17,13 +17,13 @@ class LDAPFunctionsTest(unittest.TestCase):
         return None
     def testPersonExists(self):
         edrn.sync.syncldap.personExists(self, 'mattmann')
-        self.assertEquals('(uid=mattmann)', self.lastFilter)
+        self.assertEqual('(uid=mattmann)', self.lastFilter)
     def testGroupExists(self):
         edrn.sync.syncldap.groupExists(self, 'erne')
-        self.assertEquals('(&(cn=erne)(objectClass=groupOfUniqueNames))', self.lastFilter)
+        self.assertEqual('(&(cn=erne)(objectClass=groupOfUniqueNames))', self.lastFilter)
     def testMemberExists(self):
         edrn.sync.syncldap.memberExists(self, 'erne', 'mattmann')
-        self.assertEquals('(&(cn=erne)(uniquemember=mattmann,dc=edrn,dc=jpl,dc=nasa,dc=gov))', self.lastFilter)
+        self.assertEqual('(&(cn=erne)(uniquemember=mattmann,dc=edrn,dc=jpl,dc=nasa,dc=gov))', self.lastFilter)
 
 
     
