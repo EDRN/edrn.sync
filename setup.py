@@ -61,6 +61,7 @@ setup(
         'console_scripts': [
             'dmccsync = edrn.sync.dmccsync:main',
             'dmccgroupsync = edrn.sync.dmccmakegroups:main',
+            'secureoldpasswords = edrn.sync.oldpasswords:main',
         ],
     }, 
     package_data = {

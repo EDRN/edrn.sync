@@ -16,10 +16,11 @@ import ldap.modlist as modlist
 from xml.dom.minidom import Node
 from syncldap import personExists
 from rdf import RDFPersonList
+from .utils import generatePassword
+
 
 warnings.filterwarnings("ignore")
 _verbose = False
-_defaultPwd = 'changeme'
 _defaultEmail = 'unknown@example.com'
 _defaultDesc = 'imported via EDRN dmccsync at '
 _defaultPhone = '555-555-5555'
@@ -67,7 +68,7 @@ def _addUserToLDAP(ldapUrl, adminUser, adminPass, rdfPerson):
     attrs = {}
     attrs['objectclass'] = ['top', 'person', 'organizationalPerson', 'edrnPerson', 'inetOrgPerson']
     attrs['cn'] = str(rdfPerson.firstname + " " +rdfPerson.lastname)
-    attrs['userPassword'] = str(_defaultPwd)
+    attrs['userPassword'] = generatePassword()
     attrs['uid'] = str(rdfPerson.uid)
     attrs['mail'] = str(rdfPerson.email)
     attrs['telephoneNumber'] = str(rdfPerson.phone)
