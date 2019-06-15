@@ -7,6 +7,8 @@ u'''EDRN Sync Services - unit tests for functions.'''
 import unittest2 as unittest
 import ldap
 import edrn.sync.syncldap
+from edrn.sync.utils import generatePassword
+
 
 class LDAPFunctionsTest(unittest.TestCase):
     '''Test the LDAP functions.'''
@@ -26,7 +28,14 @@ class LDAPFunctionsTest(unittest.TestCase):
         self.assertEqual('(&(cn=erne)(uniquemember=mattmann,dc=edrn,dc=jpl,dc=nasa,dc=gov))', self.lastFilter)
 
 
-    
+class PasswordFunctionsTest(unittest.TestCase):
+    u'''Test password generation'''
+    def testPasswordGeneration(self):
+        pwd1, pwd2 = generatePassword(), generatePassword()
+        self.assertTrue(pwd1 != pwd2, u'Got identical passwords "{}" and "{}"'.format(pwd1, pwd2))
+        self.assertTrue(pwd1 != 'changeme', u'Got a breakable password "changeme"')
+
+
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)
 
