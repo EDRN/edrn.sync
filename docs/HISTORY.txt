@@ -2,7 +2,7 @@ Changelog
 *********
 
 
-1.0.5 — Security
+1.0.5 - Security
 ================
 
 This release addresses a vulnerability created by weak default passwords
@@ -11,7 +11,7 @@ new users and also provides a utility for detecting old weak passwords and
 changing them to something randomized.
 
 
-1.0.4 — Packaging
+1.0.4 - Packaging
 =================
 
 This release updates the package to be compatible with PEP-470 and updates
