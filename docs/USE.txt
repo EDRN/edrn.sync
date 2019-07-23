@@ -10,3 +10,7 @@ commands on your computer:
 ``dmccgroupsync`` command
     Takes a DMCC RDF users file and a sites file and imports the associated
     PI groups and collaborative groups into the EDRN IC LDAPS server.
+``secureoldpasswords`` command
+    Goes through all existing LDAP users and tests if they're using the old,
+    insecure default password and changes those passwords to something
+    randomized.

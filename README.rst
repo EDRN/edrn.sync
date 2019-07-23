@@ -7,6 +7,9 @@ dmccsync
 dmccgroupsync
     Takes a DMCC RDF users file and a sites file and imports the associated
     PI groups and collaborative groups into the EDRN IC LDAPS server.
+secureoldpasswords
+    Randomizes users given a default insecure password by ``dmccsync``.
+
 
 For installation instructions, please see docs/INSTALL.txt.
 
@@ -15,4 +18,4 @@ This is licensed software; please see docs/LICENSE.txt.
 For the latest news and changes, see docs/HISTORY.txt.
 
 .. References:
-.. _EDRN:   http://cancer.jpl.nasa.gov/
+.. _EDRN:   https://edrn.nci..nih.gov/
