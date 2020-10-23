@@ -67,7 +67,10 @@ def _addUserToLDAP(ldapUrl, adminUser, adminPass, rdfPerson):
     dn = "uid="+rdfPerson.uid+",dc=edrn,dc=jpl,dc=nasa,dc=gov"
     attrs = {}
     attrs['objectclass'] = ['top', 'person', 'organizationalPerson', 'edrnPerson', 'inetOrgPerson']
-    attrs['cn'] = str(rdfPerson.firstname + " " +rdfPerson.lastname)
+    try:
+        attrs['cn'] = str(rdfPerson.firstname + " " +rdfPerson.lastname)
+    except UnicodeEncodeError:
+        attrs['cn'] = 'UNKNOWN'
     attrs['userPassword'] = generatePassword()
     attrs['uid'] = str(rdfPerson.uid)
     attrs['mail'] = str(rdfPerson.email)
