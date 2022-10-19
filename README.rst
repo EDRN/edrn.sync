@@ -1,3 +1,6 @@
+.. note::
+    🛑 The functions provided by this package are now part of https://github.com/EDRN/jpl.edrn.ldap.sync
+
 This is the EDRN Sync Services (EDRN_) Client package.  It provides an API
 for slurping up the DMCC RDF user stream from their identity management 
 system.  It also provides the following command-line tools:
